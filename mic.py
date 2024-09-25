@@ -1,11 +1,14 @@
-import sys
-import pyaudio
-import numpy as np
 import asyncio
+import sys
+
+import numpy as np
+import pyaudio
 import websockets
 
+
 class Recorder:
-    def __init__(self, input_sample_rate=48000, output_sample_rate=16000, channel_count=1, server_uri="ws://localhost:8765"):
+    def __init__(self, input_sample_rate=48000, output_sample_rate=16000, channel_count=1,
+                 server_uri="ws://localhost:8765"):
         self.sample_bits = 16
         self.input_sample_rate = input_sample_rate
         self.output_sample_rate = output_sample_rate
@@ -72,7 +75,8 @@ class Recorder:
         """Processes audio input data."""
         if status_flags:
             print(status_flags)
-        resampled_data = self.downsample_buffer(np.frombuffer(in_data, dtype=np.float32), self.input_sample_rate, self.output_sample_rate)
+        resampled_data = self.downsample_buffer(np.frombuffer(in_data, dtype=np.float32), self.input_sample_rate,
+                                                self.output_sample_rate)
         self.input_data(resampled_data.tobytes())
         return (in_data, pyaudio.paContinue)
 
@@ -112,12 +116,12 @@ class Recorder:
 # main
 if __name__ == "__main__":
 
-    if len(sys.argv) < 2:
-        print("need server url and port params when start")
-        sys.exit(1)
+    server_url = "127.0.0.1"
+    server_port = "8888"
 
-    server_url = sys.argv[1]
-    server_port = sys.argv[2]
+    if len(sys.argv) == 2:
+        server_url = sys.argv[1]
+        server_port = sys.argv[2]
 
     url = f"ws://{server_url}:{server_port}/ws/transcribe?lang=zh"
     print(f"requesting: {url}")
